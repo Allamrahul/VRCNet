@@ -12,6 +12,7 @@ import os
 import sys
 import argparse
 from dataset import ShapeNetH5
+from helper import *
 
 
 def train():
@@ -121,6 +122,21 @@ def train():
 
             inputs = inputs.float().cuda()
             gt = gt.float().cuda()
+
+
+            # rallam
+
+            centroid_input = centroidnp(inputs)
+
+            centroid_gt = centroidnp(gt)
+
+            tmtx = tranformation_mtx(centroid_gt, centroid_input)
+
+            inputs, gt = final_t(tmtx, inputs, gt)
+
+            # end
+
+
             inputs = inputs.transpose(2, 1).contiguous()
             # out2, loss2, net_loss = net(inputs, gt, mean_feature=mean_feature, alpha=alpha)
             out2, loss2, net_loss = net(inputs, gt, alpha=alpha)
@@ -158,6 +174,22 @@ def val(net, curr_epoch_num, val_loss_meters, dataloader_test, best_epoch_losses
 
             inputs = inputs.float().cuda()
             gt = gt.float().cuda()
+
+
+             # rallam
+
+            centroid_input = centroidnp(inputs)
+            centroid_gt = centroidnp(gt)
+
+            tmtx = tranformation_mtx(centroid_gt, centroid_input)
+
+            inputs, gt = final_t(tmtx, inputs, gt)
+            
+            # end
+
+
+
+
             inputs = inputs.transpose(2, 1).contiguous()
             # result_dict = net(inputs, gt, is_training=False, mean_feature=mean_feature)
             result_dict = net(inputs, gt, is_training=False)

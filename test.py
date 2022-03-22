@@ -8,6 +8,7 @@ import yaml
 from utils.vis_utils import plot_single_pcd
 from utils.train_utils import *
 from dataset import ShapeNetH5
+from helper import *
 
 
 def test():
@@ -50,6 +51,19 @@ def test():
 
             inputs = inputs_cpu.float().cuda()
             gt = gt_cpu.float().cuda()
+
+             # rallam
+
+            centroid_input = centroidnp(inputs)
+            centroid_gt = centroidnp(gt)
+
+            tmtx = tranformation_mtx(centroid_gt, centroid_input)
+
+            inputs, gt = final_t(tmtx, inputs, gt)
+            
+            # end
+
+
             inputs = inputs.transpose(2, 1).contiguous()
             # result_dict = net(inputs, gt, is_training=False, mean_feature=mean_feature)
             result_dict = net(inputs, gt, is_training=False)
