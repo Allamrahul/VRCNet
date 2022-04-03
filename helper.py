@@ -1,6 +1,8 @@
 import torch.optim as optim
 import torch
-
+import numpy as np
+import random
+import math
 
 
 def centroidnp(tns, sp=None): # input : 24 x 2048 x 3
@@ -36,10 +38,13 @@ def tranformation_mtx(p1, p2):  # p2 , p1 is the old centroid
     bs = p1.shape[0]
     res = torch.FloatTensor(bs, 4, 4).cuda()
 
+    rand_angle = np.random.randint(5, 60)
+    radians = math.pi * rand_angle / 180.0
+
     for x in range(bs):
         res[x] = torch.FloatTensor(
-            [[1, 0, 0, p2[x][0] - p1[x][0]],
-             [0, 1, 0, p2[x][1] - p1[x][1]],
+            [[np.cos(radians), -np.sin(radians), 0, p2[x][0] - p1[x][0]],
+             [np.sin(radians), np.cos(radians), 0, p2[x][1] - p1[x][1]],
              [0, 0, 1, p2[x][2] - p1[x][2]],
              [0, 0, 0, 1]]
         )
